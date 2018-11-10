@@ -20,16 +20,14 @@ let dom = {
                 url: 'https://swapi.co/api/planets/' + i.toString(),
                 success: function (response) {
                     dom.planets.push(response);
-                    dom.addNewRow();
+                    dom.addNewRow(dom.makeModal); //TODO: Ez itt rossz helyen van...
                 }
             });
         }
-
-
     },
 
 
-    addNewRow: function () {
+    addNewRow: function (callback) {
         let pName = document.createElement("td");
         pName.innerText = dom.planets[dom.counter]['name'];
         document.getElementById('row' + dom.counter.toString()).appendChild(pName);
@@ -82,11 +80,7 @@ let dom = {
                         }
                     });
                 }
-                $(document).ajaxComplete(function () {
-                    dom.makeModal(residentCounter, rowCounter)
-                })
-
-
+                callback(residentCounter, rowCounter)
             })
         } else {
             let pResidents = document.createElement('td');
@@ -168,8 +162,7 @@ let dom = {
         let tableBody = document.createElement('tbody');
         tableBody.id = 'table-body';
         document.getElementById('modal-table').appendChild(tableBody);
- //TODO: VAlahol itt van a nagy gond!
-        $(document).ajaxComplete(function () {
+
         for (let i = 0; i <= residentCounter; i++) {
             let tableRow = document.createElement('TR');
             tableRow.id = 'table-row' + i.toString();
@@ -178,24 +171,25 @@ let dom = {
                 let tableData = document.createElement('TD');
                 tableData.innerText = dom.residents[residentCounter][data];
                 document.getElementById('table-row' + residentCounter.toString()).appendChild(tableData)
-            }
-        }
+        }}
+        dom.activateModal(rowCounter);
 
-        let button = document.getElementById('ResidentButton' + rowCounter.toString());
-        let span = document.getElementById('closingButton' + rowCounter.toString());
-        button.onclick = function () {
-            modal.style.display = "block"
-        };
-        span.onclick = function () {
-            modal.style.display = "none";
-            }
-        })
+    },
 
-    }
-
-    };
+    activateModal: function (rowCounter) {
 
 //TODO: kétszer kell kattintani a button-ra hogy elinduljon!
+        let modal = document.getElementById('modal');
+        let button = document.getElementById('ResidentButton' + rowCounter.toString());
+        let span = document.getElementById('closingButton' + rowCounter.toString());
+        button.onclick = function() {
+            modal.style.display = "block"
+        };
+        span.onclick = function() {
+            modal.style.display = "none";
+        }
+
+    }
 
 
         //residents: function () {
@@ -219,6 +213,8 @@ let dom = {
         //      document.getElementById(tableHeader[1]).appendChild(row);
         //}}}
 
+
+};
 
 function init() {
     dom.getData();
